@@ -6,6 +6,7 @@ void init_humidifier() {
 
 void readHumidity() {
   humidity = dht->readHumidity();
+  humidity += config_hum_calibration;
 }
 
 void turnHumidifier(boolean hum_status) {

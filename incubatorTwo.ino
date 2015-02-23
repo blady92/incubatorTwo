@@ -49,6 +49,7 @@ void setup() {
 }
 
 void loop() {
+  update_fan_speed();
   readTemperatures();
   readHumidity();
   if (check_sensors()) {
