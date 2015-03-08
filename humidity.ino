@@ -10,6 +10,6 @@ void readHumidity() {
 }
 
 void turnHumidifier(boolean hum_status) {
-  module->setLED((hum_status ? TM1638_COLOR_GREEN : TM1638_COLOR_RED), 2);
+  module->setLED((hum_status ? TM1638_COLOR_RED : TM1638_COLOR_GREEN), 2);
   digitalWrite(HUMIDIFIER_PIN, (hum_status ? HIGH : LOW));
 }

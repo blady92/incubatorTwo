@@ -10,8 +10,8 @@ void init_heaters() {
 }
 
 void setHeaterPower(int heater, byte power) {
-  module->setLED((power > 0 ? TM1638_COLOR_GREEN : TM1638_COLOR_RED), heater+2);
-  
+  module->setLED((power > 0 ? TM1638_COLOR_RED : TM1638_COLOR_GREEN), heater+2);
+
   switch(heater) {
     case HEATER_UP:
       if (heater_up_cache != power) {
