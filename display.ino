@@ -1,5 +1,5 @@
 #define DISPLAY_DATA 8
-#define DISPLAY_CLOCK 9
+#define DISPLAY_CLOCK 21
 #define DISPLAY_STROBE 7
 
 int display_state = 1;
@@ -17,6 +17,7 @@ const char* config_etiquetes[] = {
   "A03",
   "A04",
   "A05",
+  "A06",
   "C01",
   "C02",
   "C03",
@@ -48,7 +49,7 @@ void serveDisplay() {
     }
     return;
   }
-  
+
   if (buttons != display_state &&(
       buttons == 1 ||
       buttons == 2)) {
@@ -95,30 +96,33 @@ void modify_config(boolean inc) {
     }
     break;
   case 3:
-    inc ? spin++ : spin--;
+    inc ? spin_1++ : spin_1--;
     break;
   case 4:
-    inc ? spinner_delay++ : spinner_delay--;
+    inc ? spin_2++ : spin_2--;
     break;
   case 5:
-    inc ? m1g1++ : m1g1--;
+    inc ? spinner_delay++ : spinner_delay--;
     break;
   case 6:
-    inc ? m2g1++ : m2g1--;
+    inc ? m1g1++ : m1g1--;
     break;
   case 7:
-    inc ? cmg1++ : cmg1--;
+    inc ? m2g1++ : m2g1--;
     break;
   case 8:
-    inc ? m1g2++ : m1g2--;
+    inc ? cmg1++ : cmg1--;
     break;
   case 9:
-    inc ? m2g2++ : m2g2--;
+    inc ? m1g2++ : m1g2--;
     break;
   case 10:
-    inc ? cmg2++ : cmg2--;
+    inc ? m2g2++ : m2g2--;
     break;
   case 11:
+    inc ? cmg2++ : cmg2--;
+    break;
+  case 12:
     inc ? config_temp_cal_up += 0.1 : config_temp_cal_up -= 0.1;
     if (config_temp_cal_up > TEMP_CAL_MAX) {
       config_temp_cal_up = TEMP_MIN;
@@ -127,7 +131,7 @@ void modify_config(boolean inc) {
       config_temp_cal_up = TEMP_CAL_MAX;
     }
     break;
-  case 12:
+  case 13:
     inc ? config_temp_cal_down += 0.1 : config_temp_cal_down -= 0.1;
     if (config_temp_cal_down > TEMP_CAL_MAX) {
       config_temp_cal_down = TEMP_CAL_MIN;
@@ -136,7 +140,7 @@ void modify_config(boolean inc) {
       config_temp_cal_down = TEMP_CAL_MAX;
     }
     break;
-  case 13:
+  case 14:
     inc ? config_hum_calibration++ : config_hum_calibration--;
     if (config_hum_calibration > HUM_CAL_MAX) {
       config_hum_calibration = HUM_CAL_MIN;
@@ -145,7 +149,7 @@ void modify_config(boolean inc) {
       config_hum_calibration = HUM_CAL_MAX;
     }
     break;
-  case 14:
+  case 15:
     inc ? spinner_power++ : spinner_power--;
     break;
   }
@@ -154,7 +158,7 @@ void modify_config(boolean inc) {
 
 void serveConfig() {
   config_state++;
-  if (config_state > 14) {
+  if (config_state > 15) {
     saveConfig();
     config_state = -1;
     config_flag = 0;
@@ -177,39 +181,42 @@ void update_config_display() {
     writeFloatNumber(config_hum, 0);
     break;
   case 3:
-    writeFloatNumber(spin, 0);
+    writeFloatNumber(spin_1, 0);
     break;
   case 4:
-    writeFloatNumber(spinner_delay, 0);
+    writeFloatNumber(spin_2, 0);
     break;
   case 5:
-    writeFloatNumber(m1g1, 0);
+    writeFloatNumber(spinner_delay, 0);
     break;
   case 6:
-    writeFloatNumber(m2g1, 0);
+    writeFloatNumber(m1g1, 0);
     break;
   case 7:
-    writeFloatNumber(cmg1, 0);
+    writeFloatNumber(m2g1, 0);
     break;
   case 8:
-    writeFloatNumber(m1g2, 0);
+    writeFloatNumber(cmg1, 0);
     break;
   case 9:
-    writeFloatNumber(m2g2, 0);
+    writeFloatNumber(m1g2, 0);
     break;
   case 10:
-    writeFloatNumber(cmg2, 0);
+    writeFloatNumber(m2g2, 0);
     break;
   case 11:
-    writeFloatNumber(config_temp_cal_up, 2);
+    writeFloatNumber(cmg2, 0);
     break;
   case 12:
-    writeFloatNumber(config_temp_cal_down, 2);
+    writeFloatNumber(config_temp_cal_up, 2);
     break;
   case 13:
-    writeFloatNumber(config_hum_calibration, 0);
+    writeFloatNumber(config_temp_cal_down, 2);
     break;
   case 14:
+    writeFloatNumber(config_hum_calibration, 0);
+    break;
+  case 15:
     writeFloatNumber(spinner_power, 0);
     break;
   }
@@ -241,14 +248,14 @@ void writeFloatNumber(float number, int precision) {
     }
     return;
   }
-  
+
   int dots = 0;
   boolean rev_flag = (number <= 0);
-  
+
   if (rev_flag) {
     number *= -1.0f;
   }
-  
+
   if (precision > 0) {
     int c = pow(10, precision);
     number *= c;
@@ -258,9 +265,9 @@ void writeFloatNumber(float number, int precision) {
       dots *= 2;
     }
   }
-  
+
   int i_number = (int)number;
-  
+
   if (precision > 0) {
     int r = i_number%10;
     if (r < 5) {
@@ -269,7 +276,7 @@ void writeFloatNumber(float number, int precision) {
      i_number += 10-r;
     }
   }
-  
+
   if (rev_flag) {
     i_number *= -1;
   }

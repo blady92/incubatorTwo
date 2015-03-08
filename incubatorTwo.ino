@@ -17,8 +17,9 @@ float humidity;
 float config_temp_up;          //Temperatura górna        A01
 float config_temp_down;        //Temperatura dolna        A02
 float config_hum;              //Wilgotność               A03
-byte spin;                     //Obroty wentylatora       A04
-byte spinner_delay;            //Czas przerwy obracania   A05
+byte spin_1;                   //Obroty wentylatora 1     A04
+byte spin_2;                   //Obroty wentylatora 2     A05
+byte spinner_delay;            //Czas przerwy obracania   A06
 byte m1g1;                     //Moc 1 grzałki 1          C01
 byte m2g1;                     //Moc 2 grzałki 1          C02
 byte cmg1;                     //Czas mocy 1 grzałki 1    C03
@@ -79,7 +80,7 @@ void logic() {
     counter_up = -1;
     setHeaterPower(HEATER_UP, 0);
   }
-  
+
   /* LOWER HEATER */
   if (temperature_up <= config_temp_down) {
     if (counter_down < 0) {
@@ -95,7 +96,7 @@ void logic() {
     counter_down = -1;
     setHeaterPower(HEATER_DOWN, 0);
   }
-  
+
   /* HUMIDIFIER */
   turnHumidifier(humidity < config_hum);
 }

@@ -27,7 +27,7 @@ void loadConfigFromEEPROM() {
   config_temp_cal_up = EEPROM.read(2)/10.f;
   config_temp_cal_down = EEPROM.read(3)/10.f;
   config_hum_calibration = EEPROM.read(4);
-  spin = EEPROM.read(5);
+  spin_1 = EEPROM.read(5);
   m1g1 = EEPROM.read(6);
   m2g1 = EEPROM.read(7);
   cmg1 = EEPROM.read(8);
@@ -37,6 +37,7 @@ void loadConfigFromEEPROM() {
   config_temp_down = EEPROM.read(12)/10.f+TEMP_MIN;
   spinner_delay = EEPROM.read(13);
   spinner_power = EEPROM.read(14);
+  spin_2 = EEPROM.read(15);
 }
 
 void restoreDefaults() {
@@ -46,7 +47,8 @@ void restoreDefaults() {
   config_temp_cal_up = 0;
   config_temp_cal_down = 0;
   config_hum_calibration = 0;
-  spin = 255;
+  spin_1 = 255;
+  spin_2 = 255;
   m1g1 = 255;
   m2g1 = 25;
   cmg1 = 5;
@@ -63,7 +65,7 @@ void saveConfig() {
   EEPROM.write(2, config_temp_cal_up*10);
   EEPROM.write(3, config_temp_cal_down*10);
   EEPROM.write(4, config_hum_calibration);
-  EEPROM.write(5, spin);
+  EEPROM.write(5, spin_1);
   EEPROM.write(6, m1g1);
   EEPROM.write(7, m2g1);
   EEPROM.write(8, cmg1);
@@ -73,6 +75,5 @@ void saveConfig() {
   EEPROM.write(12, (config_temp_down-TEMP_MIN)*10);
   EEPROM.write(13, spinner_delay);
   EEPROM.write(14, spinner_power);
+  EEPROM.write(15, spin_2);
 }
-   
-
