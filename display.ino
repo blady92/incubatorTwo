@@ -246,6 +246,9 @@ void writeFloatNumber(float number, int precision) {
   int n = strlen(buffer);
   int l = 0;
   int i = 8 - n + 1;
+  if (precision == 0) {
+    i--;
+  }
   if (i < 0) {
     i = 0;
   }
