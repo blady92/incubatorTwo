@@ -254,9 +254,7 @@ void writeFloatNumber(float number, int precision) {
   }
   while (i < 8) {
     if (buffer[0] == '-') {
-      byte bytes[] = {0,0,0,0,0,0,0,0};
-      bytes[i] = 0b01000000;
-      module->setDisplay(bytes);
+      module->setDisplayToString("-", 0, i);
     } else if (buffer[1] == '.') {
       module->setDisplayDigit(buffer[0]-'0', i, true);
       buffer++;
