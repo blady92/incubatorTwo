@@ -68,7 +68,7 @@ void serveDisplay() {
 
 void modify_config(boolean inc) {
  switch(config_state) {
-  case 0:
+  case 0: //A01
     inc ? config_temp_up += 0.1 : config_temp_up -= 0.1;
     if (config_temp_up > TEMP_MAX) {
       config_temp_up = TEMP_MIN;
@@ -77,7 +77,7 @@ void modify_config(boolean inc) {
       config_temp_up = TEMP_MAX;
     }
     break;
-  case 1:
+  case 1: //A02
     inc ? config_temp_down += 0.1 : config_temp_down -= 0.1;
     if (config_temp_down > TEMP_MAX) {
       config_temp_down = TEMP_MIN;
@@ -86,7 +86,7 @@ void modify_config(boolean inc) {
       config_temp_down = TEMP_MAX;
     }
     break;
-  case 2:
+  case 2: //A03
     inc ? config_hum++ : config_hum--;
     if (config_hum > HUM_MAX) {
       config_hum = HUM_MIN;
@@ -95,34 +95,34 @@ void modify_config(boolean inc) {
       config_hum = HUM_MAX;
     }
     break;
-  case 3:
+  case 3: //A04
     inc ? spin_1++ : spin_1--;
     break;
-  case 4:
+  case 4: //A05
     inc ? spin_2++ : spin_2--;
     break;
-  case 5:
+  case 5: //A06
     inc ? spinner_delay++ : spinner_delay--;
     break;
-  case 6:
+  case 6: //C01
     inc ? m1g1++ : m1g1--;
     break;
-  case 7:
+  case 7: //C02
     inc ? m2g1++ : m2g1--;
     break;
-  case 8:
+  case 8: //C03
     inc ? cmg1++ : cmg1--;
     break;
-  case 9:
+  case 9: //C04
     inc ? m1g2++ : m1g2--;
     break;
-  case 10:
+  case 10: //C05
     inc ? m2g2++ : m2g2--;
     break;
-  case 11:
+  case 11: //C06
     inc ? cmg2++ : cmg2--;
     break;
-  case 12:
+  case 12: //C07
     inc ? config_temp_cal_up += 0.1 : config_temp_cal_up -= 0.1;
     if (config_temp_cal_up > TEMP_CAL_MAX) {
       config_temp_cal_up = TEMP_MIN;
@@ -131,7 +131,7 @@ void modify_config(boolean inc) {
       config_temp_cal_up = TEMP_CAL_MAX;
     }
     break;
-  case 13:
+  case 13: //C08
     inc ? config_temp_cal_down += 0.1 : config_temp_cal_down -= 0.1;
     if (config_temp_cal_down > TEMP_CAL_MAX) {
       config_temp_cal_down = TEMP_CAL_MIN;
@@ -140,7 +140,7 @@ void modify_config(boolean inc) {
       config_temp_cal_down = TEMP_CAL_MAX;
     }
     break;
-  case 14:
+  case 14: //C09
     inc ? config_hum_calibration++ : config_hum_calibration--;
     if (config_hum_calibration > HUM_CAL_MAX) {
       config_hum_calibration = HUM_CAL_MIN;
@@ -149,7 +149,7 @@ void modify_config(boolean inc) {
       config_hum_calibration = HUM_CAL_MAX;
     }
     break;
-  case 15:
+  case 15: //C10
     inc ? spinner_power++ : spinner_power--;
     break;
   }
@@ -237,48 +237,31 @@ void changeDisplay(int state) {
 }
 
 void writeFloatNumber(float number, int precision) {
-  if (number == 0) {
-    if (precision == 0) {
-      module->setDisplayDigit(0, 7, false);
+  char *buffer = new char[9];
+  dtostrf(
+    number,
+    precision+1,
+    precision,
+    buffer);
+  int n = strlen(buffer);
+  int l = 0;
+  int i = 8 - n + 1;
+  if (i < 0) {
+    i = 0;
+  }
+  while (i < 8) {
+    if (buffer[0] == '-') {
+      byte bytes[] = {0,0,0,0,0,0,0,0};
+      bytes[i] = 0b01000000;
+      module->setDisplay(bytes);
+    } else if (buffer[1] == '.') {
+      module->setDisplayDigit(buffer[0]-'0', i, true);
+      buffer++;
     } else {
-      module->setDisplayDigit(0, 7-precision, true);
-      for(int i = 0; i < precision; i++) {
-        module->setDisplayDigit(0, 7-i, false);
-      }
+      module->setDisplayDigit(buffer[0]-'0', i, false);
     }
-    return;
+    i++;
+    buffer++;
   }
-
-  int dots = 0;
-  boolean rev_flag = (number <= 0);
-
-  if (rev_flag) {
-    number *= -1.0f;
-  }
-
-  if (precision > 0) {
-    int c = pow(10, precision);
-    number *= c;
-    dots = 1;
-    while (number > c) {
-      c *= 10;
-      dots *= 2;
-    }
-  }
-
-  int i_number = (int)number;
-
-  if (precision > 0) {
-    int r = i_number%10;
-    if (r < 5) {
-     i_number -= r;
-    } else {
-     i_number += 10-r;
-    }
-  }
-
-  if (rev_flag) {
-    i_number *= -1;
-  }
-  module->setDisplayToDecNumber(i_number, dots);
+  module->setDisplayToString(buffer);
 }
