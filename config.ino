@@ -2,7 +2,7 @@
 #define TEMP_MAX 39.0
 #define HUM_MIN 20
 #define HUM_MAX 80
-#define HUM_CAL_MIN 0
+#define HUM_CAL_MIN -5
 #define HUM_CAL_MAX 5
 #define TEMP_CAL_MIN -1.0
 #define TEMP_CAL_MAX 1.0
