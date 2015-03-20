@@ -125,7 +125,7 @@ void modify_config(boolean inc) {
   case 12: //C07
     inc ? config_temp_cal_up += 0.1 : config_temp_cal_up -= 0.1;
     if (config_temp_cal_up > TEMP_CAL_MAX) {
-      config_temp_cal_up = TEMP_MIN;
+      config_temp_cal_up = TEMP_CAL_MIN;
     }
     if (config_temp_cal_up < TEMP_CAL_MIN) {
       config_temp_cal_up = TEMP_CAL_MAX;
@@ -238,7 +238,7 @@ void changeDisplay(int state) {
 
 void writeFloatNumber(float number, int precision) {
   char *buffer = new char[9];
-  dtostrf(
+  char* initial_buffer = dtostrf(
     number,
     precision+1,
     precision,
@@ -265,4 +265,5 @@ void writeFloatNumber(float number, int precision) {
     buffer++;
   }
   module->setDisplayToString(buffer);
+  delete initial_buffer;
 }
